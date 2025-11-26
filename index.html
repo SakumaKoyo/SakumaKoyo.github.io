@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Modern Othello — Play vs AI</title>
+  <meta name="description"
+    content="Play Othello (Reversi) against a built-in AI. Adjustable difficulty, undo, hints, and responsive modern UI." />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='%23022'/><circle cx='40' cy='40' r='10' fill='%23fff'/><circle cx='60' cy='60' r='10' fill='%23fff'/></svg>">
+  <style>
+    :root {
+      --bg: #0b1220;
+      --card: #0f1724;
+      --muted: #9aa4bf;
+      --accent: #60a5fa;
+      --accent-2: #34d399;
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.06);
+      color-scheme: dark
+    }
+
+    [data-theme='light'] {
+      --bg: #f7fafc;
+      --card: #fff;
+      --muted: #475569;
+      --accent: #0369a1;
+      --accent-2: #059669;
+      --glass: rgba(0, 0, 0, 0.03);
+      --glass-border: rgba(0, 0, 0, 0.06);
+      color-scheme: light
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+      background: linear-gradient(180deg, var(--bg), #071026);
+      color: #e6eef8
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 28px auto;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 18px
+    }
+
+    @media(max-width:980px) {
+      .wrap {
+        grid-template-columns: 1fr;
+        padding: 14px
+      }
+    }
+
+    .panel {
+      background: linear-gradient(180deg, var(--card), rgba(0, 0, 0, 0.04));
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--glass-border)
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .board-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px
+    }
+
+    .board {
+      width: min(520px, 92vw);
+      aspect-ratio: 1;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 6px;
+      padding: 6px;
+      background: linear-gradient(180deg, #061226, #081a2b);
+      border-radius: 12px
+    }
+
+    .cell {
+      background: linear-gradient(180deg, #0a2d14, #053214);
+      border-radius: 6px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform .12s ease
+    }
+
+    .cell:hover {
+      transform: translateY(-3px)
+    }
+
+    .cell.disabled {
+      opacity: .55;
+      cursor: default;
+      transform: none
+    }
+
+    .disc {
+      width: 78%;
+      height: 78%;
+      border-radius: 50%;
+      box-shadow: 0 6px 14px rgba(2, 6, 23, 0.6) inset
+    }
+
+    .disc.black {
+      background: linear-gradient(180deg, #000, #222)
+    }
+
+    .disc.white {
+      background: linear-gradient(180deg, #fff, #e6e6e6)
+    }
+
+    .hint-dot {
+      position: absolute;
+      width: 12%;
+      height: 12%;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.22)
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    button {
+      background: transparent;
+      border: 1px solid var(--glass-border);
+      padding: 8px 12px;
+      border-radius: 10px;
+      color: inherit;
+      cursor: pointer
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border: none;
+      color: #022
+    }
+
+    .status {
+      font-weight: 600
+    }
+
+    .score {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.02), transparent);
+      border: 1px solid var(--glass-border)
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .difficulty {
+      width: 100%
+    }
+
+    .footer {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .legend {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap
+    }
+
+    .moves {
+      max-height: 200px;
+      overflow: auto;
+      padding-right: 6px
+    }
+
+    .move {
+      padding: 6px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.01), transparent);
+      border: 1px solid var(--glass-border)
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .toggle {
+      display: flex;
+      gap: 8px;
+      align-items: center
+    }
+
+    .themeBtn {
+      padding: 6px 10px;
+      border-radius: 8px
+    }
+
+    footer.pagefoot {
+      margin-top: 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px
+    }
+  </style>
+</head>
+
+<body data-theme="dark">
+  <main class="wrap">
+    <section class="panel" aria-label="Game panel">
+      <header>
+        <div>
+          <h1>Modern Othello</h1>
+          <div class="meta">Play vs built-in AI • Responsive • Undo & Hints</div>
+        </div>
+        <div class="top-actions">
+          <div class="chip score" title="Score"><span id="blackScore">2</span> ⚫ — ⚪ <span id="whiteScore">2</span>
+          </div>
+          <div class="chip status" id="turnIndicator">Black's turn</div>
+        </div>
+      </header>
+
+      <div class="board-wrap">
+        <div id="board" class="board" role="grid" aria-label="Othello board"></div>
+        <div class="row small">
+          <div>Click a cell to place. Hints show legal moves. You can also press U to undo, R to restart.</div>
+        </div>
+      </div>
+
+    </section>
+
+    <aside class="panel controls" aria-label="Controls">
+      <div class="row">
+        <button id="newBtn" class="btn-primary">New Game</button>
+        <button id="undoBtn">Undo</button>
+        <button id="hintBtn">Toggle Hints</button>
+      </div>
+
+      <div>
+        <label class="small">Play as:</label>
+        <div class="row" style="margin-top:6px">
+          <label><input type="radio" name="side" value="black" checked /> Black (goes first)</label>
+          <label style="margin-left:8px"><input type="radio" name="side" value="white" /> White</label>
+        </div>
+      </div>
+
+      <div>
+        <label class="small">Difficulty</label>
+        <input id="diff" class="difficulty" type="range" min="1" max="5" value="3" />
+        <div class="row small">
+          <div>Easy</div>
+          <div style="margin-left:auto">Hard</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="small">AI Think Depth (approx)</label>
+        <div class="row">
+          <div id="depthLabel">3</div>
+          <div class="small" style="margin-left:auto" id="timeEst">—</div>
+        </div>
+      </div>
+
+      <div>
+        <label class="small">Move history</label>
+        <div class="moves" id="moves"></div>
+      </div>
+
+      <div class="footer">
+        <div class="legend small">Hints: <span
+            style="display:inline-block;width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.22);vertical-align:middle;margin-left:6px"></span>
+        </div>
+        <div style="margin-top:8px" class="small">AI: Minimax + Alpha-Beta, corner-sensitive heuristics</div>
+        <div style="margin-top:12px" class="row">
+          <button id="themeBtn" class="themeBtn">Toggle Theme</button>
+          <a id="exportBtn" href="#" style="margin-left:auto">Export game</a>
+        </div>
+      </div>
+    </aside>
+
+    <footer class="pagefoot">Built with plain HTML/CSS/JavaScript — enjoy!</footer>
+  </main>
+
+  <script>
+    // Othello game with AI (minimax + alpha-beta). Single-file demo.
+    // Board: 8x8, 0 empty, 1 black, -1 white
+
+    const SIZE = 8;
+    const DIRS = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+
+    // DOM
+    const boardEl = document.getElementById('board');
+    const blackScoreEl = document.getElementById('blackScore');
+    const whiteScoreEl = document.getElementById('whiteScore');
+    const turnIndicator = document.getElementById('turnIndicator');
+    const newBtn = document.getElementById('newBtn');
+    const undoBtn = document.getElementById('undoBtn');
+    const hintBtn = document.getElementById('hintBtn');
+    const diffRange = document.getElementById('diff');
+    const depthLabel = document.getElementById('depthLabel');
+    const movesEl = document.getElementById('moves');
+    const hintToggle = { on: true };
+    const themeBtn = document.getElementById('themeBtn');
+    const exportBtn = document.getElementById('exportBtn');
+
+    let board = null;
+    let turn = 1; // 1 black, -1 white
+    let playerSide = 1; // which side the human plays
+    let history = [];
+    let moveHistory = [];
+    let hintCells = [];
+    let aiThinking = false;
+
+    // Initialization
+    function makeEmptyBoard() {
+      return Array.from({ length: SIZE }, () => Array.from({ length: SIZE }, () => 0));
+    }
+    function copyBoard(b) { return b.map(r => r.slice()); }
+
+    function initGame() {
+      board = makeEmptyBoard();
+      board[3][3] = -1; board[4][4] = -1; board[3][4] = 1; board[4][3] = 1;
+      turn = 1; history = []; moveHistory = [];
+      render();
+    }
+
+    // Helpers
+    function inBounds(r, c) { return r >= 0 && r < SIZE && c >= 0 && c < SIZE; }
+
+    function legalMoves(b, side) {
+      const moves = new Map();
+      for (let r = 0; r < SIZE; r++)for (let c = 0; c < SIZE; c++) {
+        if (b[r][c] !== 0) continue;
+        let totalFlips = [];
+        for (const [dr, dc] of DIRS) {
+          let rr = r + dr, cc = c + dc; let flips = [];
+          while (inBounds(rr, cc) && b[rr][cc] === -side) { flips.push([rr, cc]); rr += dr; cc += dc; }
+          if (flips.length > 0 && inBounds(rr, cc) && b[rr][cc] === side) { totalFlips = totalFlips.concat(flips); }
+        }
+        if (totalFlips.length > 0) moves.set(r * SIZE + c, totalFlips);
+      }
+      return moves; // key -> array of flip coords
+    }
+
+    function applyMove(b, side, idx, flips) {
+      const nb = copyBoard(b); const r = Math.floor(idx / SIZE), c = idx % SIZE;
+      nb[r][c] = side; for (const [fr, fc] of flips) nb[fr][fc] = side; return nb;
+    }
+
+    function countPieces(b) { let bC = 0, wC = 0; for (let r = 0; r < SIZE; r++)for (let c = 0; c < SIZE; c++) { if (b[r][c] === 1) bC++; if (b[r][c] === -1) wC++; } return [bC, wC]; }
+
+    // Rendering
+    function render() {
+      boardEl.innerHTML = '';
+      const moves = legalMoves(board, turn);
+      hintCells = Array.from(moves.keys()).map(k => parseInt(k));
+      for (let r = 0; r < SIZE; r++)for (let c = 0; c < SIZE; c++) {
+        const idx = r * SIZE + c;
+        const cell = document.createElement('div'); cell.className = 'cell'; cell.setAttribute('role', 'button'); cell.setAttribute('tabindex', '0');
+        if (board[r][c] === 1) { const d = document.createElement('div'); d.className = 'disc black'; cell.appendChild(d); cell.classList.add('disabled'); }
+        else if (board[r][c] === -1) { const d = document.createElement('div'); d.className = 'disc white'; cell.appendChild(d); cell.classList.add('disabled'); }
+        else {
+          if (hintToggle.on && moves.has(idx)) {
+            const hint = document.createElement('div'); hint.className = 'hint-dot'; cell.appendChild(hint);
+          }
+        }
+        if (moves.has(idx)) cell.dataset.legal = '1';
+        cell.addEventListener('click', () => onCellClick(idx));
+        cell.addEventListener('keydown', (e) => { if (e.key === 'Enter') onCellClick(idx); });
+        boardEl.appendChild(cell);
+      }
+      const [bC, wC] = countPieces(board);
+      blackScoreEl.textContent = bC; whiteScoreEl.textContent = wC;
+      turnIndicator.textContent = (turn === 1 ? "Black's turn" : "White's turn");
+      renderMoves();
+      // If it's AI's turn, trigger AI
+      if (!aiThinking && turn !== playerSide) { aiMove(); }
+    }
+
+    function renderMoves() {
+      movesEl.innerHTML = ''; moveHistory.slice().reverse().forEach((m, i) => {
+        const d = document.createElement('div'); d.className = 'move'; d.textContent = `${m.side === 1 ? 'B' : 'W'} @ ${String.fromCharCode(65 + m.c)}${m.r + 1}`; movesEl.appendChild(d);
+      });
+    }
+
+    // Click handling
+    function onCellClick(idx) {
+      if (aiThinking) return; const r = Math.floor(idx / SIZE), c = idx % SIZE; const moves = legalMoves(board, turn);
+      if (!moves.has(idx)) return; const flips = moves.get(idx);
+      history.push(copyBoard(board)); moveHistory.push({ r, c, side: turn });
+      board = applyMove(board, turn, idx, flips);
+      // switch
+      turn = -turn;
+      // check if opponent has moves, otherwise pass back
+      if (legalMoves(board, turn).size === 0) { if (legalMoves(board, -turn).size > 0) { turn = -turn; } }
+      render();
+      checkGameOver();
+    }
+
+    // Undo
+    function undo() { if (history.length === 0 || aiThinking) return; board = history.pop(); const last = moveHistory.pop(); turn = last.side; render(); }
+
+    // New game
+    newBtn.addEventListener('click', () => { initGame(); });
+    undoBtn.addEventListener('click', () => { undo(); });
+    hintBtn.addEventListener('click', () => { hintToggle.on = !hintToggle.on; render(); });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'u') { undo(); } if (e.key.toLowerCase() === 'r') { initGame(); } });
+
+    // Difficulty control
+    diffRange.addEventListener('input', () => { depthLabel.textContent = diffRange.value; }); depthLabel.textContent = diffRange.value;
+
+    // Theme toggle
+    themeBtn.addEventListener('click', () => { const body = document.body; const next = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; body.setAttribute('data-theme', next); });
+
+    // Export game
+    exportBtn.addEventListener('click', (e) => {
+      e.preventDefault(); const data = { board, turn, moveHistory }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'othello-game.json'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    // Game over check
+    function checkGameOver() { if (legalMoves(board, 1).size === 0 && legalMoves(board, -1).size === 0) { const [bC, wC] = countPieces(board); const winner = bC > wC ? 'Black wins' : (wC > bC ? 'White wins' : 'Draw'); setTimeout(() => alert(`Game over — ${winner} (${bC} : ${wC})`), 100); } }
+
+    // AI logic: minimax with alpha-beta, heuristic
+    function aiMove() {
+      aiThinking = true; turnIndicator.textContent = 'AI thinking...';
+      // schedule heavy work slightly later to allow UI update
+      setTimeout(() => {
+        const diff = parseInt(diffRange.value, 10);
+        const depth = Math.max(1, diff + 1); // approximate
+        const side = turn;
+        const moves = legalMoves(board, side);
+        if (moves.size === 0) { aiThinking = false; turn = -turn; render(); return; }
+        let best = null; let bestScore = -Infinity;
+        // order moves by heuristic to improve pruning
+        const candidates = Array.from(moves.keys()).map(k => parseInt(k)).map(k => ({ k, score: quickHeuristic(applyMove(board, side, k, moves.get(k)), side) })).sort((a, b) => b.score - a.score).map(x => x.k);
+        const start = performance.now();
+        for (const k of candidates) {
+          const flips = moves.get(k);
+          const nb = applyMove(board, side, k, flips);
+          const val = -negamax(nb, -side, depth - 1, -Infinity, Infinity);
+          if (val > bestScore) { bestScore = val; best = k; }
+        }
+        const end = performance.now();
+        // apply best
+        history.push(copyBoard(board)); moveHistory.push({ r: Math.floor(best / SIZE), c: best % SIZE, side: turn });
+        board = applyMove(board, side, best, moves.get(best));
+        turn = -turn;
+        // pass check
+        if (legalMoves(board, turn).size === 0) { if (legalMoves(board, -turn).size > 0) turn = -turn; }
+        aiThinking = false; render();
+      }, 40);
+    }
+
+    // Negamax with alpha-beta
+    function negamax(b, side, depth, alpha, beta) {
+      // terminal or depth 0
+      const moves = legalMoves(b, side);
+      if (depth <= 0 || moves.size === 0) { return quickHeuristic(b, side); }
+      let value = -Infinity;
+      // move ordering: try corner moves first
+      const order = Array.from(moves.keys()).map(k => parseInt(k)).sort((a, b) => movePriority(a) - movePriority(b));
+      for (const k of order) {
+        const child = applyMove(b, side, k, moves.get(k));
+        const score = -negamax(child, -side, depth - 1, -beta, -alpha);
+        if (score > value) value = score;
+        if (value > alpha) alpha = value;
+        if (alpha >= beta) break; // prune
+      }
+      return value;
+    }
+
+    function movePriority(k) {
+      const r = Math.floor(k / SIZE), c = k % SIZE; // corners highest
+      if ((r === 0 || r === 7) && (c === 0 || c === 7)) return 0; // corners best
+      // adjacent to corner are worst
+      if ((r === 0 || r === 7) && (c === 1 || c === 6)) return 100;
+      if ((r === 1 || r === 6) && (c === 0 || c === 7)) return 100;
+      // edges rank higher
+      if (r === 0 || r === 7 || c === 0 || c === 7) return 10;
+      return 50;
+    }
+
+    // Quick heuristic used for leaf evaluation
+    function quickHeuristic(b, side) {
+      const [bC, wC] = countPieces(b);
+      const my = side === 1 ? bC : wC;
+      const opp = side === 1 ? wC : bC;
+      let score = (my - opp) * 10; // piece diff
+      // mobility
+      const myMoves = legalMoves(b, side).size; const oppMoves = legalMoves(b, -side).size;
+      if (myMoves + oppMoves > 0) score += ((myMoves - oppMoves) * 5);
+      // corner occupancy
+      const corners = [[0, 0], [0, 7], [7, 0], [7, 7]];
+      for (const [r, c] of corners) { if (b[r][c] === side) score += 100; else if (b[r][c] === -side) score -= 100; }
+      // stability: count edge pieces
+      let myEdges = 0, oppEdges = 0;
+      for (let i = 0; i < SIZE; i++) { if (b[0][i] === side) myEdges++; if (b[0][i] === -side) oppEdges++; if (b[7][i] === side) myEdges++; if (b[7][i] === -side) oppEdges++; if (b[i][0] === side) myEdges++; if (b[i][0] === -side) oppEdges++; if (b[i][7] === side) myEdges++; if (b[i][7] === -side) oppEdges++; }
+      score += (myEdges - oppEdges) * 2;
+      return score;
+    }
+
+    // Small heuristic used for initial ordering
+    function quickHeuristicSimple(b, side) { return quickHeuristic(b, side); }
+
+    // Alternative quick heuristic for ordering
+    function quickHeuristicOrdering(b, side) { return quickHeuristic(b, side); }
+
+    // Time estimation (rough)
+    setInterval(() => { const d = parseInt(diffRange.value, 10); document.getElementById('timeEst').textContent = d <= 2 ? 'fast' : d <= 3 ? 'ok' : 'slow'; document.getElementById('depthLabel').textContent = Math.max(1, d + 1); }, 400);
+
+    autoPlayPreferredSide();
+
+    function autoPlayPreferredSide() {
+      const radios = document.getElementsByName('side'); for (const r of radios) r.addEventListener('change', () => {
+        playerSide = (r.value === 'black' ? 1 : -1); // if AI should go first
+        initGame(); if (playerSide !== 1) { // human is white -> AI starts
+          turn = 1; render();
+        }
+      });
+    }
+
+    // On load
+    initGame();
+
+  </script>
+</body>
+
+</html>
