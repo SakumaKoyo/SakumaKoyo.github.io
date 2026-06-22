@@ -152,8 +152,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 num1 = Math.floor(Math.random() * 20) + 1;
                 num2 = Math.floor(Math.random() * 20) + 1;
             } else {
-                num1 = getRandomIntExcludingZero(-20, 20);
-                num2 = getRandomIntExcludingZero(-20, 20);
+                // num1 = getRandomIntExcludingZero(-20, 20);
+                // num2 = getRandomIntExcludingZero(-20, 20);
+                num1 = getRandomIntIncludingZero(-20, 20);
+                num2 = getRandomIntIncludingZero(-20, 20);
             }
             answer = num1 + num2;
         } else if (selectedOp === '-') {
@@ -161,8 +163,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 num1 = Math.floor(Math.random() * 20) + 2;
                 num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
             } else {
-                num1 = getRandomIntExcludingZero(-20, 20);
-                num2 = getRandomIntExcludingZero(-20, 20);
+                // num1 = getRandomIntExcludingZero(-20, 20);
+                // num2 = getRandomIntExcludingZero(-20, 20);
+                num1 = getRandomIntIncludingZero(-20, 20);
+                num2 = getRandomIntIncludingZero(-20, 20);
             }
             answer = num1 - num2;
         } else if (selectedOp === '*') {
@@ -170,8 +174,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 num1 = Math.floor(Math.random() * 9) + 1;
                 num2 = Math.floor(Math.random() * 9) + 1;
             }else {
-                num1 = getRandomIntExcludingZero(-9, 9);
-                num2 = getRandomIntExcludingZero(-9, 9);
+                // num1 = getRandomIntExcludingZero(-9, 9);
+                // num2 = getRandomIntExcludingZero(-9, 9);
+                num1 = getRandomIntIncludingZero(-9, 9);
+                num2 = getRandomIntIncludingZero(-9, 9);
             }
             answer = num1 * num2;
         } else if (selectedOp === '/') {
@@ -181,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 num1 = num2 * answer;
             }else {
                 num2 = getRandomIntExcludingZero(-9, 9);
-                answer = getRandomIntExcludingZero(-9, 9);
+                answer = getRandomIntIncludingZero(-9, 9);
                 num1 = num2 * answer;
             }
         }
@@ -193,6 +199,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function getRandomIntExcludingZero(min, max) {
         let val = 0;
         while(val === 0) val = Math.floor(Math.random() * (max - min + 1)) + min;
+        return val;
+    }
+
+    function getRandomIntIncludingZero(min, max) {
+        val = Math.floor(Math.random() * (max - min + 1)) + min;
         return val;
     }
 
