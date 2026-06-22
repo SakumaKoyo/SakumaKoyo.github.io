@@ -123,10 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
         timerDisplay.textContent = `${min}:${sec}`;
     }
 
-    function generateSingleProblem(opMode, rangeMode) {
+function generateSingleProblem(opMode, rangeMode) {
         let num1, num2, answer, selectedOp;
         
-        // 虫食いモードの内部演算をマッピング
+        // 演算モード決定
         if (opMode === 'mushikui-pm') {
             selectedOp = Math.random() < 0.5 ? '+' : '-';
         } else if (opMode === 'mushikui-all') {
@@ -145,50 +145,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let isPositiveOnly = (rangeMode === 'positive');
 
-        // 【確定で負の数を入れるロジック適用】
         if (selectedOp === '+') {
             if (isPositiveOnly) {
-                num1 = Math.floor(Math.random() * 20) + 1;
-                num2 = Math.floor(Math.random() * 20) + 1;
+                num1 = getRandomIntIncludingZero(0, 20);
+                num2 = getRandomIntIncludingZero(0, 20);
             } else {
-                const pattern = Math.floor(Math.random() * 3);
-                if (pattern === 0) { num1 = getRandomIntExcludingZero(-20, -1); num2 = getRandomIntExcludingZero(1, 20); }
-                else if (pattern === 1) { num1 = getRandomIntExcludingZero(1, 20); num2 = getRandomIntExcludingZero(-20, -1); }
-                else { num1 = getRandomIntExcludingZero(-20, -1); num2 = getRandomIntExcludingZero(-20, -1); }
+                // 【元に戻す】 -20 〜 20 の範囲から一様にランダム
+                num1 = getRandomIntIncludingZero(-20, 20);
+                num2 = getRandomIntIncludingZero(-20, 20);
             }
             answer = num1 + num2;
+
         } else if (selectedOp === '-') {
             if (isPositiveOnly) {
-                num1 = Math.floor(Math.random() * 20) + 2;
-                num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
+                // 答えも正になるよう調整 (num1 > num2)
+                num1 = getRandomIntIncludingZero(0, 20);
+                num2 = getRandomIntIncludingZero(0, num1); // num2 <= num1
             } else {
-                const pattern = Math.floor(Math.random() * 3);
-                if (pattern === 0) { num1 = getRandomIntExcludingZero(-20, -1); num2 = getRandomIntExcludingZero(1, 20); }
-                else if (pattern === 1) { num1 = getRandomIntExcludingZero(1, 20); num2 = getRandomIntExcludingZero(-20, -1); }
-                else { num1 = getRandomIntExcludingZero(-20, -1); num2 = getRandomIntExcludingZero(-20, -1); }
+                // 【元に戻す】 -20 〜 20 の範囲から一様にランダム（0を除く）
+                num1 = getRandomIntIncludingZero(-20, 20);
+                num2 = getRandomIntIncludingZero(-20, 20);
             }
             answer = num1 - num2;
+
         } else if (selectedOp === '*') {
             if (isPositiveOnly) {
-                num1 = Math.floor(Math.random() * 9) + 1;
-                num2 = Math.floor(Math.random() * 9) + 1;
+                num1 = getRandomIntIncludingZero(0, 10); // 0〜10
+                num2 = getRandomIntIncludingZero(0, 10); // 0〜10
             } else {
-                const pattern = Math.floor(Math.random() * 3);
-                if (pattern === 0) { num1 = getRandomIntExcludingZero(-9, -1); num2 = getRandomIntExcludingZero(1, 9); }
-                else if (pattern === 1) { num1 = getRandomIntExcludingZero(1, 9); num2 = getRandomIntExcludingZero(-9, -1); }
-                else { num1 = getRandomIntExcludingZero(-9, -1); num2 = getRandomIntExcludingZero(-9, -1); }
+                // 【元に戻す】 -9 〜 9 の範囲から一様にランダム
+                num1 = getRandomIntIncludingZero(-10, 10);
+                num2 = getRandomIntIncludingZero(-10, 10);
             }
             answer = num1 * num2;
+
         } else if (selectedOp === '/') {
             if (isPositiveOnly) {
-                num2 = Math.floor(Math.random() * 9) + 1;
-                answer = Math.floor(Math.random() * 9) + 1;
-                num1 = num2 * answer;
+                num2 = getRandomIntIncludingZero(1, 10);   // 割る数(1〜9)
+                answer = getRandomIntIncludingZero(0, 10); // 答え(1〜9)
+                num1 = num2 * answer;                       // 割られる数
             } else {
-                const pattern = Math.floor(Math.random() * 3);
-                if (pattern === 0) { num2 = getRandomIntExcludingZero(1, 9); answer = getRandomIntExcludingZero(-9, -1); }
-                else if (pattern === 1) { num2 = getRandomIntExcludingZero(-9, -1); answer = getRandomIntExcludingZero(1, 9); }
-                else { num2 = getRandomIntExcludingZero(-9, -1); answer = getRandomIntExcludingZero(-9, -1); }
+                // 【元に戻す】 割る数と答えをシンプルにランダム生成して逆算（割り切れる整数を維持）
+                num2 = getRandomIntExcludingZero(-10, 10);
+                answer = getRandomIntIncludingZero(-9, 9);
                 num1 = num2 * answer;
             }
         }
@@ -200,6 +199,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function getRandomIntExcludingZero(min, max) {
         let val = 0;
         while(val === 0) val = Math.floor(Math.random() * (max - min + 1)) + min;
+        return val;
+    }
+
+    function getRandomIntIncludingZero(min, max) {
+        let val = 0;
+        val = Math.floor(Math.random() * (max - min + 1)) + min;
+        if (val === 0) val = Math.floor(Math.random() * (max - min + 1)) + min; // 再度生成
         return val;
     }
 
