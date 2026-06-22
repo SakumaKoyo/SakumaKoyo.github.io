@@ -171,8 +171,8 @@ document.addEventListener('DOMContentLoaded', () => {
             answer = num1 - num2;
         } else if (selectedOp === '*') {
             if (isPositiveOnly) {
-                num1 = getRandomIntIncludingZero(0, 20);
-                num2 = getRandomIntIncludingZero(0, 20);
+                num1 = getRandomIntIncludingZero(0, 9);
+                num2 = getRandomIntIncludingZero(0, 9);
             }else {
                 // num1 = getRandomIntExcludingZero(-9, 9);
                 // num2 = getRandomIntExcludingZero(-9, 9);
@@ -203,7 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getRandomIntIncludingZero(min, max) {
-        val = Math.floor(Math.random() * (max - min + 1)) + min;
+        let val = Math.floor(Math.random() * (max - min + 1)) + min;
+        if (val === 0 && Math.random() < 0.5) {
+            val = getRandomIntIncludingZero(min, max);
+        }
         return val;
     }
 
