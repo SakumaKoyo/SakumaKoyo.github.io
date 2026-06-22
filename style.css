@@ -100,7 +100,7 @@ button.danger-btn { padding: 6px 12px; background: var(--danger); color: white; 
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     position: relative;
     text-align: center;
-    min-height: 190px;
+    min-height: 170px;
     transition: background-color 0.15s, transform 0.1s;
 }
 
