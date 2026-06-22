@@ -15,8 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('start-btn');
     const backSetupBtn = document.getElementById('back-setup-btn');
     const clearDataBtn = document.getElementById('clear-data-btn');
-    const feedbackOverlay = document.getElementById('feedback-overlay');
     const graphLimitSelect = document.getElementById('graph-limit');
+    
+    // エフェクト用UI要素
+    const formulaCard = document.getElementById('formula-card-element');
+    const feedbackText = document.getElementById('feedback-text');
     
     // 絞り込みフィルターUI
     const filterOp = document.getElementById('filter-op');
@@ -39,11 +42,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let problemsList = [];
     let chartInstance = null;
     
-    // 現在プレイしたモードの一時保持（結果画面から自動フィルターするため）
     let lastPlayedOp = "+";
     let lastPlayedRange = "positive";
 
-    const POPUP_DURATION = 400; // マルバツ表示時間 (0.4秒に調整)
+    const FLASH_DURATION = 350; // エフェクト速度をキビキビ動くよう短縮(0.35秒)
 
     // ==================== タブ切り替え ====================
     tabPlayBtn.addEventListener('click', () => {
@@ -61,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRecords();
     });
 
-    // ==================== ゲーム制御ロジック ====================
+    // ==================== ゲーム制御 ====================
     startBtn.addEventListener('click', startCountdown);
     backSetupBtn.addEventListener('click', () => switchView(setupView));
     
@@ -72,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // フィルターが変更されたらグラフを再描画
     filterOp.addEventListener('change', renderRecords);
     filterRange.addEventListener('change', renderRecords);
     graphLimitSelect.addEventListener('change', renderRecords);
@@ -103,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastPlayedRange = document.getElementById('range-select').value;
         totalQuestions = parseInt(document.getElementById('count-select').value);
 
-        // 記録タブの初期フィルターを、今から遊ぶモードに自動で合わせておく
+        // 記録タブのフィルターを自動同期
         filterOp.value = lastPlayedOp;
         filterRange.value = lastPlayedRange;
 
@@ -208,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formulaText.textContent = `${n1Str} ${currentProb.opSymbol} ${n2Str} = `;
     }
 
-    // テンキー入力
+    // テンキーイベント
     document.querySelectorAll('.key-btn[data-val]').forEach(button => {
         button.addEventListener('click', () => {
             const val = button.dataset.val;
@@ -233,11 +234,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (userAnsInt === currentAnswer) {
             triggerFeedback('◯');
             currentIdx++;
-            if (currentIdx < totalQuestions) {
-                showNextProblem();
-            } else {
-                endGame();
-            }
+            // ポップアップ演出の時間を考慮して次へ進む
+            setTimeout(() => {
+                if (currentIdx < totalQuestions) {
+                    showNextProblem();
+                } else {
+                    endGame();
+                }
+            }, FLASH_DURATION - 100);
         } else {
             triggerFeedback('×');
             wrongCount++;
@@ -246,10 +250,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // 【修正】問題カードがフラッシュし、カード中央にマルバツを出す演出
     function triggerFeedback(symbol) {
-        feedbackOverlay.textContent = symbol;
-        feedbackOverlay.className = symbol === '◯' ? 'correct-pop' : 'incorrect-pop';
-        setTimeout(() => { feedbackOverlay.className = 'hidden'; }, POPUP_DURATION);
+        feedbackText.textContent = symbol;
+        feedbackText.classList.remove('hidden');
+        
+        if (symbol === '◯') {
+            formulaCard.classList.add('correct-flash');
+        } else {
+            formulaCard.classList.add('incorrect-flash');
+        }
+        
+        setTimeout(() => {
+            feedbackText.classList.add('hidden');
+            formulaCard.classList.remove('correct-flash', 'incorrect-flash');
+        }, FLASH_DURATION);
     }
 
     function endGame() {
@@ -263,7 +278,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         switchView(resultView);
 
-        // 新仕様：opMode と rangeMode を含めてローカルストレージに保存
         const timestamp = new Date().toLocaleString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
         const newRecord = {
             date: timestamp,
@@ -280,30 +294,26 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('calc_training_records', JSON.stringify(currentRecords));
     }
 
-    // ==================== 記録の可視化・モード別絞り込み ====================
+    // ==================== 【修正】記録の可視化と確実な絞り込み ====================
     function renderRecords() {
         let allRecords = JSON.parse(localStorage.getItem('calc_training_records')) || [];
         
-        // 時系列順にソート
         allRecords.sort((a, b) => a.rawTimestamp - b.rawTimestamp);
 
-        // 【新機能】選択されているモードで絞り込み
         const targetOp = filterOp.value;
         const targetRange = filterRange.value;
         
+        // 厳密な絞り込みの実行
         let filteredRecords = allRecords.filter(r => {
-            // 過去データにmode情報がない旧データの互換性を担保
             return r.opMode === targetOp && r.rangeMode === targetRange;
         });
 
-        // 件数制限の適用
         const limit = graphLimitSelect.value;
         if (limit !== 'all') {
             const numLimit = parseInt(limit);
             filteredRecords = filteredRecords.slice(-numLimit);
         }
 
-        // テーブル履歴用（最新順）
         const latestRecords = [...filteredRecords].reverse();
         const tbody = document.getElementById('history-tbody');
         tbody.innerHTML = '';
@@ -319,7 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
             tbody.appendChild(tr);
         });
 
-        // グラフ用配列
         const labels = filteredRecords.map(r => r.date);
         const speedData = filteredRecords.map(r => r.avgSpeed);
         const wrongRateData = filteredRecords.map(r => parseFloat(((r.wrongCount / r.totalQuestions) * 100).toFixed(1)));

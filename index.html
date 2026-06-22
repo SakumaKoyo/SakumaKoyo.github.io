@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>計算トレーニングアプリ v2</title>
+    <title>計算トレーニングアプリ v3</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -16,61 +16,61 @@
         </nav>
 
         <section id="play-section" class="tab-content active">
-            <div class="play-wrapper">
-                
-                <div id="setup-view" class="card main-card">
-                    <h2>トレーニング設定</h2>
-                    <div class="input-group">
-                        <label for="op-select">演算の種類</label>
-                        <select id="op-select">
-                            <option value="+">足し算 (+)</option>
-                            <option value="-">引き算 (-)</option>
-                            <option value="*">掛け算 (×)</option>
-                            <option value="/">割り算 (÷)</option>
-                            <option value="rand-pm">足し算・引き算（ランダム）</option>
-                            <option value="rand-md">掛け算・割り算（ランダム）</option>
-                            <option value="rand-all">四則演算すべて（ランダム）</option>
-                        </select>
+            
+            <div id="setup-view" class="card">
+                <h2>トレーニング設定</h2>
+                <div class="input-group">
+                    <label for="op-select">演算の種類</label>
+                    <select id="op-select">
+                        <option value="+">足し算 (+)</option>
+                        <option value="-">引き算 (-)</option>
+                        <option value="*">掛け算 (×)</option>
+                        <option value="/">割り算 (÷)</option>
+                        <option value="rand-pm">足し算・引き算（ランダム）</option>
+                        <option value="rand-md">掛け算・割り算（ランダム）</option>
+                        <option value="rand-all">四則演算すべて（ランダム）</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="range-select">数値の範囲</label>
+                    <select id="range-select">
+                        <option value="positive">正の数のみ（回答も正）</option>
+                        <option value="all">正負の数両方</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="count-select">出題数</label>
+                    <select id="count-select">
+                        <option value="10">10問</option>
+                        <option value="20" selected>20問</option>
+                        <option value="30">30問</option>
+                        <option value="50">50問</option>
+                    </select>
+                </div>
+                <button id="start-btn" class="primary-btn">スタート</button>
+            </div>
+
+            <div id="countdown-view" class="card hidden">
+                <div id="countdown-number">3</div>
+            </div>
+
+            <div id="game-view" class="hidden">
+                <div class="formula-card" id="formula-card-element">
+                    <div class="game-header">
+                        <span id="progress-display">第 1 / 20 問</span>
+                        <span id="timer-display">00:00</span>
                     </div>
-                    <div class="input-group">
-                        <label for="range-select">数値の範囲</label>
-                        <select id="range-select">
-                            <option value="positive">正の数のみ（回答も正）</option>
-                            <option value="all">正負の数両方</option>
-                        </select>
+                    
+                    <div class="formula-area">
+                        <span id="formula-text">0 + 0 = </span>
+                        <div class="answer-box" id="answer-input-box"></div>
                     </div>
-                    <div class="input-group">
-                        <label for="count-select">出題数</label>
-                        <select id="count-select">
-                            <option value="10">10問</option>
-                            <option value="20" selected>20問</option>
-                            <option value="30">30問</option>
-                            <option value="50">50問</option>
-                        </select>
-                    </div>
-                    <button id="start-btn" class="primary-btn">スタート</button>
+                    
+                    <div id="feedback-text" class="hidden"></div>
                 </div>
 
-                <div id="countdown-view" class="card main-card hidden">
-                    <div id="countdown-number">3</div>
-                </div>
-
-                <div id="game-view" class="game-container hidden">
-                    <div class="card main-card relative-box">
-                        <div class="game-header">
-                            <span id="progress-display">第 1 / 20 問</span>
-                            <span id="timer-display">00:00</span>
-                        </div>
-                        
-                        <div class="formula-area">
-                            <span id="formula-text">0 + 0 = </span>
-                            <div class="answer-box" id="answer-input-box"></div>
-                        </div>
-
-                        <div id="feedback-overlay" class="hidden"></div>
-                    </div>
-
-                    <div class="tenkey-container">
+                <div class="fixed-tenkey">
+                    <div class="tenkey-grid">
                         <button class="key-btn" data-val="1">1</button>
                         <button class="key-btn" data-val="2">2</button>
                         <button class="key-btn" data-val="3">3</button>
@@ -86,39 +86,39 @@
                         <button class="key-btn enter" id="enter-btn">決定</button>
                     </div>
                 </div>
-
-                <div id="result-view" class="card main-card hidden">
-                    <h2>結果発表 🎉</h2>
-                    <div class="result-stats">
-                        <p>総経過時間: <strong id="res-total-time">0分0秒</strong></p>
-                        <p>誤答数: <strong id="res-wrong-count">0回</strong></p>
-                        <p>1問あたりの平均速度: <strong id="res-avg-speed">0.00秒</strong></p>
-                    </div>
-                    <button id="back-setup-btn" class="primary-btn">もう一度解く</button>
-                </div>
-                
             </div>
+
+            <div id="result-view" class="card hidden">
+                <h2>結果発表 🎉</h2>
+                <div class="result-stats">
+                    <p>総経過時間: <strong id="res-total-time">0分0秒</strong></p>
+                    <p>誤答数: <strong id="res-wrong-count">0回</strong></p>
+                    <p>1問あたりの平均速度: <strong id="res-avg-speed">0.00秒</strong></p>
+                </div>
+                <button id="back-setup-btn" class="primary-btn">もう一度解く</button>
+            </div>
+            
         </section>
 
         <section id="record-section" class="tab-content">
-            <div class="card">
+            <div class="card scrollable-card">
                 <h2>過去のデータとグラフ</h2>
                 
                 <div class="filter-panel">
                     <div class="input-group">
-                        <label for="filter-op">演算で絞り込み</label>
+                        <label for="filter-op">演算</label>
                         <select id="filter-op">
                             <option value="+">足し算 (+)</option>
                             <option value="-">引き算 (-)</option>
                             <option value="*">掛け算 (×)</option>
                             <option value="/">割り算 (÷)</option>
-                            <option value="rand-pm">足し算・引き算（ランダム）</option>
-                            <option value="rand-md">掛け算・割り算（ランダム）</option>
-                            <option value="rand-all">四則演算すべて（ランダム）</option>
+                            <option value="rand-pm">足し算・引き算</option>
+                            <option value="rand-md">掛け算・割り算</option>
+                            <option value="rand-all">四則演算すべて</option>
                         </select>
                     </div>
                     <div class="input-group">
-                        <label for="filter-range">範囲で絞り込み</label>
+                        <label for="filter-range">範囲</label>
                         <select id="filter-range">
                             <option value="positive">正の数のみ</option>
                             <option value="all">正負の数両方</option>
@@ -134,7 +134,7 @@
                         <option value="30">最新30件</option>
                         <option value="all">全件</option>
                     </select>
-                    <button id="clear-data-btn" class="danger-btn">全消去</button>
+                    <button id="clear-data-btn" class="danger-btn">データを全消去</button>
                 </div>
 
                 <div class="chart-container">
