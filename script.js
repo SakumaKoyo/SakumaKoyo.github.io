@@ -239,7 +239,7 @@ function generateSingleProblem(opMode, rangeMode) {
                 blockMiddle.style.order = "2";
                 blockRight.style.order = "3";
                 answerInputBox.style.order = "4"; // 一番右
-            } else if (blankPattern >= 4) {
+            } else if (blankPattern >= 3) {
                 currentAnswer = currentProb.num1; // 左の数を当てる
                 blockLeft.textContent = ``;
                 blockMiddle.textContent = `${op} ${n2Str}`;
