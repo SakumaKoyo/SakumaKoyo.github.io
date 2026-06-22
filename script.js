@@ -227,7 +227,7 @@ function generateSingleProblem(opMode, rangeMode) {
 
         if (isMushikui) {
             // 0:答えが空欄, 1:左が空欄, 2:右が空欄
-            const blankPattern = Math.floor(Math.random() * 3);
+            const blankPattern = Math.floor(Math.random() * 5);
 
             if (blankPattern === 0) {
                 currentAnswer = currentProb.answer; // 答えを当てる
@@ -239,7 +239,7 @@ function generateSingleProblem(opMode, rangeMode) {
                 blockMiddle.style.order = "2";
                 blockRight.style.order = "3";
                 answerInputBox.style.order = "4"; // 一番右
-            } else if (blankPattern === 1) {
+            } else if (blankPattern >= 4) {
                 currentAnswer = currentProb.num1; // 左の数を当てる
                 blockLeft.textContent = ``;
                 blockMiddle.textContent = `${op} ${n2Str}`;
