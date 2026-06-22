@@ -149,8 +149,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selectedOp === '+') {
             if (isPositiveOnly) {
-                num1 = Math.floor(Math.random() * 20) + 1;
-                num2 = Math.floor(Math.random() * 20) + 1;
+                num1 = getRandomIntIncludingZero(0, 20);
+                num2 = getRandomIntIncludingZero(0, 20);
             } else {
                 // num1 = getRandomIntExcludingZero(-20, 20);
                 // num2 = getRandomIntExcludingZero(-20, 20);
@@ -160,8 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
             answer = num1 + num2;
         } else if (selectedOp === '-') {
             if (isPositiveOnly) {
-                num1 = Math.floor(Math.random() * 20) + 2;
-                num2 = Math.floor(Math.random() * (num1 - 1)) + 1;
+                num1 = getRandomIntIncludingZero(0, 20);
+                num2 = getRandomIntIncludingZero(0, num1);
             } else {
                 // num1 = getRandomIntExcludingZero(-20, 20);
                 // num2 = getRandomIntExcludingZero(-20, 20);
@@ -171,8 +171,8 @@ document.addEventListener('DOMContentLoaded', () => {
             answer = num1 - num2;
         } else if (selectedOp === '*') {
             if (isPositiveOnly) {
-                num1 = Math.floor(Math.random() * 9) + 1;
-                num2 = Math.floor(Math.random() * 9) + 1;
+                num1 = getRandomIntIncludingZero(0, 20);
+                num2 = getRandomIntIncludingZero(0, 20);
             }else {
                 // num1 = getRandomIntExcludingZero(-9, 9);
                 // num2 = getRandomIntExcludingZero(-9, 9);
@@ -182,8 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
             answer = num1 * num2;
         } else if (selectedOp === '/') {
             if (isPositiveOnly) {
-                num2 = Math.floor(Math.random() * 9) + 1;
-                answer = Math.floor(Math.random() * 9) + 1;
+                num2 = getRandomIntIncludingZero(1, 9);
+                answer = getRandomIntIncludingZero(0, 9);
                 num1 = num2 * answer;
             }else {
                 num2 = getRandomIntExcludingZero(-9, 9);
