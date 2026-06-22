@@ -133,34 +133,34 @@ button.danger-btn { padding: 6px 12px; background: var(--danger); color: white; 
 }
 
 /* ==================== 【修正】最下部固定テンキー ==================== */
-/* .fixed-tenkey { */
-/*     position: fixed; */
-/*     bottom: 0; */
-/*     left: 0; */
-/*     width: 100%; */
-/*     background: #e4e7eb; */
-/*     padding: 12px; */
-/*     box-shadow: 0 -4px 10px rgba(0,0,0,0.08); */
-/*     border-top-left-radius: 16px; */
-/*     border-top-right-radius: 16px; */
-/*     z-index: 100; */
-/*     display: flex; */
-/*     justify-content: center; */
-/* } */
 .fixed-tenkey {
     position: fixed;
-    /* 修正：下部に安全な余白（セーフエリア＋追加の余白）を設ける */
-    bottom: calc(max(10px, env(safe-area-inset-bottom))); 
-    left: 5%;
-    width: 90%; /* 画面の端から少し浮かせることで浮遊感を出し、誤操作を防ぎます */
+    bottom: 0;
+    left: 0;
+    width: 100%;
     background: #e4e7eb;
     padding: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* 浮かせたので影の向きを調整 */
-    border-radius: 16px; /* 四隅を丸くしてカード風に */
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.08);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
     z-index: 100;
     display: flex;
     justify-content: center;
 }
+/* .fixed-tenkey { */
+/*     position: fixed; */
+/*     /* 修正：下部に安全な余白（セーフエリア＋追加の余白）を設ける */ */
+/*     bottom: calc(max(10px, env(safe-area-inset-bottom)));  */
+/*     left: 5%; */
+/*     width: 90%; /* 画面の端から少し浮かせることで浮遊感を出し、誤操作を防ぎます */ */
+/*     background: #e4e7eb; */
+/*     padding: 12px; */
+/*     box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* 浮かせたので影の向きを調整 */ */
+/*     border-radius: 16px; /* 四隅を丸くしてカード風に */ */
+/*     z-index: 100; */
+/*     display: flex; */
+/*     justify-content: center; */
+/* } */
 
 .tenkey-grid {
     width: 100%;
