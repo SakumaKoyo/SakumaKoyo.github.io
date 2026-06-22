@@ -71,7 +71,6 @@ body {
     margin-bottom: 15px;
 }
 
-/* 記録タブ用（スクロール可能にする） */
 .scrollable-card {
     max-height: 85vh;
     overflow-y: auto;
@@ -93,37 +92,46 @@ button.danger-btn { padding: 6px 12px; background: var(--danger); color: white; 
 /* カウントダウン */
 #countdown-number { font-size: 70px; font-weight: bold; color: var(--primary); text-align: center; padding: 40px 0; }
 
-/* ==================== 【修正】問題表示エリア ==================== */
+/* 問題表示エリア */
 .formula-card {
     background: var(--card-bg);
     border-radius: 12px;
-    padding: 25px 20px;
+    padding: 40px 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     position: relative;
     text-align: center;
+    min-height: 190px;
     transition: background-color 0.15s, transform 0.1s;
 }
 
-.game-header { display: flex; justify-content: space-between; font-size: 14px; color: #7f8c8d; font-weight: bold; margin-bottom: 25px; }
-.formula-area { display: flex; justify-content: center; align-items: center; gap: 12px; font-size: 32px; font-weight: bold; }
-.answer-box { width: 120px; height: 55px; border-bottom: 3px solid var(--primary); display: flex; justify-content: center; align-items: center; font-size: 36px; color: var(--primary); background: #f8fafc; }
+.game-header { display: flex; justify-content: space-between; font-size: 14px; color: #7f8c8d; font-weight: bold; position: absolute; top: 15px; left: 20px; right: 20px;}
 
-/* 問題カード内に浮かび上がるマルバツテキスト */
-#feedback-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 80px;
+/* 【重要】虫食いの並び替えに対応するための設定 */
+.formula-area { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 8px; 
+    font-size: 32px; 
     font-weight: bold;
-    z-index: 5;
-    pointer-events: none;
+    margin-top: 15px;
 }
 
-/* マルバツが起きたときのカード全体のスタイル変化 */
+/* 各数式ブロックの並び順（初期値） */
+#block-left   { order: 1; display: inline-block; }
+#block-middle { order: 3; display: inline-block; }
+#block-right  { order: 5; display: inline-block; }
+.answer-box   { order: 6; display: flex; justify-content: center; align-items: center; width: 110px; height: 55px; border-bottom: 3px solid var(--primary); font-size: 36px; color: var(--primary); background: #f8fafc; }
+
+/* 履歴一覧のモード表示用バッジ */
+.badge-op { background: #e2e8f0; color: #4a5568; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+.badge-range { background: #edf2f7; color: #718096; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+
+/* マルバツ演出 */
+#feedback-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 90px; font-weight: bold; z-index: 5; pointer-events: none; }
 .formula-card.correct-flash { background-color: var(--correct-bg); color: var(--correct-text); }
 .formula-card.correct-flash .answer-box { color: var(--correct-text); border-bottom-color: var(--correct-text); }
-.formula-card.incorrect-flash { background-color: var(--incorrect-bg); color: var(--incorrect-text); transform: translateX(0); animation: shake 0.15s 2; }
+.formula-card.incorrect-flash { background-color: var(--incorrect-bg); color: var(--incorrect-text); animation: shake 0.15s 2; }
 .formula-card.incorrect-flash .answer-box { color: var(--incorrect-text); border-bottom-color: var(--incorrect-text); }
 
 @keyframes shake {
@@ -132,54 +140,22 @@ button.danger-btn { padding: 6px 12px; background: var(--danger); color: white; 
     100% { transform: translateX(0); }
 }
 
-/* ==================== 【修正】最下部固定テンキー ==================== */
-/* .fixed-tenkey { */
-/*     position: fixed; */
-/*     bottom: 0; */
-/*     left: 0; */
-/*     width: 100%; */
-/*     background: #e4e7eb; */
-/*     padding: 12px; */
-/*     box-shadow: 0 -4px 10px rgba(0,0,0,0.08); */
-/*     border-top-left-radius: 16px; */
-/*     border-top-right-radius: 16px; */
-/*     z-index: 100; */
-/*     display: flex; */
-/*     justify-content: center; */
-/* } */
+/* 最下部固定テンキー */
 .fixed-tenkey {
     position: fixed;
-    /* 修正：下部に安全な余白（セーフエリア＋追加の余白）を設ける */
     bottom: calc(max(10px, env(safe-area-inset-bottom))); 
     left: 5%;
-    width: 90%; /* 画面の端から少し浮かせることで浮遊感を出し、誤操作を防ぎます */
+    width: 90%; 
     background: #e4e7eb;
     padding: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15); /* 浮かせたので影の向きを調整 */
-    border-radius: 16px; /* 四隅を丸くしてカード風に */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15); 
+    border-radius: 16px; 
     z-index: 100;
     display: flex;
     justify-content: center;
 }
-
-.tenkey-grid {
-    width: 100%;
-    max-width: 450px; /* 押しやすい幅を維持 */
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.key-btn {
-    padding: 16px 0;
-    font-size: 24px;
-    font-weight: bold;
-    background: #ffffff;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 3px 0 #cbd5e1;
-    color: #333;
-}
+.tenkey-grid { width: 100%; max-width: 450px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.key-btn { padding: 16px 0; font-size: 24px; font-weight: bold; background: #ffffff; border: none; border-radius: 10px; box-shadow: 0 3px 0 #cbd5e1; color: #333; }
 .key-btn:active { background: #f1f5f9; transform: translateY(2px); box-shadow: 0 1px 0 #cbd5e1; }
 .key-btn.action { background: #cbd5e1; box-shadow: 0 3px 0 #94a3b8; }
 .key-btn.action:active { background: #94a3b8; }
@@ -192,8 +168,6 @@ button.danger-btn { padding: 6px 12px; background: var(--danger); color: white; 
 .history-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
 .history-table th, .history-table td { padding: 8px 4px; border-bottom: 1px solid var(--border-color); }
 .history-table th { background: #f4f6f9; position: sticky; top: 0; }
-
 .result-stats { margin: 15px 0; font-size: 16px; text-align: center; line-height: 1.8; }
 .result-stats strong { color: var(--primary); font-size: 20px; }
-
 .hidden { display: none !important; }
