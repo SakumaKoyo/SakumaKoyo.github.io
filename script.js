@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isPositiveOnly) {
                 num1 = Math.floor(Math.random() * 9) + 1;
                 num2 = Math.floor(Math.random() * 9) + 1;
-            } else {
+            }else {
                 num1 = getRandomIntExcludingZero(-9, 9);
                 num2 = getRandomIntExcludingZero(-9, 9);
             }
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 num2 = Math.floor(Math.random() * 9) + 1;
                 answer = Math.floor(Math.random() * 9) + 1;
                 num1 = num2 * answer;
-            } else {
+            }else {
                 num2 = getRandomIntExcludingZero(-9, 9);
                 answer = getRandomIntExcludingZero(-9, 9);
                 num1 = num2 * answer;

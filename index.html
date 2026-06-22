@@ -26,16 +26,16 @@
                         <option value="-">引き算 (-)</option>
                         <option value="*">掛け算 (×)</option>
                         <option value="/">割り算 (÷)</option>
-                        <option value="rand-pm">足し算・引き算（ランダム）</option>
-                        <option value="rand-md">掛け算・割り算（ランダム）</option>
-                        <option value="rand-all">四則演算すべて（ランダム）</option>
+                        <option value="rand-pm">足し算・引き算</option>
+                        <option value="rand-md">掛け算・割り算</option>
+                        <option value="rand-all">四則演算すべて</option>
                     </select>
                 </div>
                 <div class="input-group">
                     <label for="range-select">数値の範囲</label>
                     <select id="range-select">
-                        <option value="positive">正の数のみ（回答も正）</option>
-                        <option value="all">正負の数両方</option>
+                        <option value="positive">正の数のみ</option>
+                        <option value="all">負の数を含む</option>
                     </select>
                 </div>
                 <div class="input-group">
@@ -121,7 +121,7 @@
                         <label for="filter-range">範囲</label>
                         <select id="filter-range">
                             <option value="positive">正の数のみ</option>
-                            <option value="all">正負の数両方</option>
+                            <option value="all">負の数を含む</option>
                         </select>
                     </div>
                 </div>
@@ -141,7 +141,7 @@
                     <canvas id="record-chart"></canvas>
                 </div>
 
-                <h3>選択モードの履歴（最新順）</h3>
+                <h3>履歴（最新順）</h3>
                 <div class="history-list-wrapper">
                     <table class="history-table">
                         <thead>
