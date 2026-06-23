@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 効果音ファイルの読み込み設定
     const audioCorrect = new Audio('sound/Correct_Fast-Single.mp3');
     const audioIncorrect = new Audio('sound/Incorrect.mp3');
+    const audioCountdown = new Audio('sound/Countdown.mp3');
 
     // スマホでの音ズレ・遅延を防ぐための「先読み（プリロード）」設定
     audioCorrect.preload = 'auto';
@@ -90,6 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function startCountdown() {
         switchView(countdownView);
         let count = 3;
+
+        audioCountdown.currentTime = 0; // 連続で正解したときに音が途切れないよう再生位置をリセット
+        audioCountdown.play();
+
         document.getElementById('countdown-number').textContent = count;
         const interval = setInterval(() => {
             count--;
