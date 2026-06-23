@@ -129,6 +129,8 @@ function generateSingleProblem(opMode, rangeMode) {
         // 演算モード決定
         if (opMode === 'mushikui-pm') {
             selectedOp = Math.random() < 0.5 ? '+' : '-';
+        } else if (opMode === 'mushikui-pd') {
+            selectedOp = Math.random() < 0.5 ? '*' : '/';
         } else if (opMode === 'mushikui-all') {
             const ops = ['+', '-', '*', '/'];
             selectedOp = ops[Math.floor(Math.random() * ops.length)];
@@ -223,7 +225,7 @@ function generateSingleProblem(opMode, rangeMode) {
         const ans = currentProb.answer;
 
         // 現在選択されているのが「虫食いモード」かどうか
-        const isMushikui = (lastPlayedOp === 'mushikui-pm' || lastPlayedOp === 'mushikui-all');
+        const isMushikui = (lastPlayedOp === 'mushikui-pm' || lastPlayedOp === 'mushikui-pd' || lastPlayedOp === 'mushikui-all');
 
         if (isMushikui) {
             // 0:答えが空欄, 1:左が空欄, 2:右が空欄
@@ -375,6 +377,7 @@ function generateSingleProblem(opMode, rangeMode) {
             else if (r.opMode === 'rand-md') opDisplay = '×÷ランダム';
             else if (r.opMode === 'rand-all') opDisplay = '四則ランダム';
             else if (r.opMode === 'mushikui-pm') opDisplay = '虫食い(±)';
+            else if (r.opMode === 'mushikui-pd') opDisplay = '虫食い(×÷)';
             else if (r.opMode === 'mushikui-all') opDisplay = '虫食い(四則)';
 
             let rangeDisplay = r.rangeMode === 'positive' ? '正のみ' : '正負';
