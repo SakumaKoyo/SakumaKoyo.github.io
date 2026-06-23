@@ -29,6 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const blockMiddle = document.getElementById('block-middle');
     const blockRight = document.getElementById('block-right');
 
+    // 効果音ファイルの読み込み設定
+    const audioCorrect = new Audio('sound/Correct_Fast-Single.mp3');
+    const audioIncorrect = new Audio('sound/Incorrect.mp3');
+
+    // スマホでの音ズレ・遅延を防ぐための「先読み（プリロード）」設定
+    audioCorrect.preload = 'auto';
+    audioIncorrect.preload = 'auto';
+
     let totalQuestions = 20;
     let currentIdx = 0;
     let wrongCount = 0;
@@ -298,6 +306,10 @@ function generateSingleProblem(opMode, rangeMode) {
         const userAnsInt = parseInt(userTypedInput);
 
         if (userAnsInt === currentAnswer) {
+            // 【追加】正解音を鳴らす
+            audioCorrect.currentTime = 0; // 連続で正解したときに音が途切れないよう再生位置をリセット
+            audioCorrect.play();
+
             triggerFeedback('◯');
             currentIdx++;
             setTimeout(() => {
@@ -305,6 +317,10 @@ function generateSingleProblem(opMode, rangeMode) {
                 else endGame();
             }, FLASH_DURATION - 100);
         } else {
+            // 【追加】不正解音を鳴らす
+            audioIncorrect.currentTime = 0;
+            audioIncorrect.play();
+
             triggerFeedback('×');
             wrongCount++;
             userTypedInput = "";
