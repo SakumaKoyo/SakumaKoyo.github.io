@@ -20,7 +20,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        h2 { font-size: 20px; margin-bottom: 15px; color: #d9534f; }
+        h2 { font-size: 18px; margin-bottom: 15px; color: #d9534f; line-height: 1.4; }
         p { font-size: 14px; line-height: 1.6; color: #555; }
         .steps {
             background: #f0f7ff;
@@ -41,6 +41,47 @@
             border-radius: 25px;
             font-size: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        .url-title {
+            font-size: 11px;
+            font-weight: bold;
+            color: #868e96;
+            margin: 0 0 4px 0;
+            text-align: left;
+        }
+        /* コピーエリアの横並び用スタイル */
+        .url-container {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .url-box {
+            flex: 1;
+            background: #f1f3f5;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            word-break: break-all;
+            color: #666;
+            font-family: monospace;
+            text-align: left;
+        }
+        .copy-btn {
+            background: #6c757d;
+            color: #fff;
+            border: none;
+            padding: 10px 14px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+        .copy-btn:active {
+            background: #495057;
         }
     </style>
 </head>
@@ -48,7 +89,7 @@
 
     <div class="card">
         <h2>🚨 計算練習アプリ再追加のお願い</h2>
-        <p>アプリのシステム更新にともない、URLが新しくなりました。現在のアイコン,URLからはゲームをプレイできません。</p>
+        <p>アプリのシステム更新にともない、URLが新しくなりました。現在のアイコンや旧URLからはゲームをプレイできません。</p>
         
         <div class="steps">
             <p style="margin:0 0 5px 0; font-weight:bold; color:#0078d7;">【お引越しの手順】</p>
@@ -60,7 +101,42 @@
         </div>
 
         <a href="https://sakumakoyo.github.io/calc-trainer/index.html" class="btn">新しいアプリを開く</a>
+        
+        <div>
+            <p class="url-title">【新しいURL】</p>
+            <div class="url-container">
+                <div class="url-box" id="url-text">https://sakumakoyo.github.io/calc-trainer/</div>
+                <button class="copy-btn" id="copy-btn">コピー</button>
+            </div>
+        </div>
     </div>
+
+<script>
+        // --- コピペボタンの処理 ---
+        document.getElementById('copy-btn').addEventListener('click', () => {
+            const urlText = document.getElementById('url-text').innerText;
+            navigator.clipboard.writeText(urlText).then(() => {
+                const btn = document.getElementById('copy-btn');
+                btn.innerText = '完了! ✔';
+                btn.style.background = '#28a745';
+                setTimeout(() => {
+                    btn.innerText = 'コピー';
+                    btn.style.background = '#6c757d';
+                }, 1500);
+            }).catch(err => {
+                alert('コピーに失敗しました。');
+            });
+        });
+
+        // --- 追加：移行ボタンを強制的に規定のブラウザで開く処理 ---
+        document.querySelector('.btn').addEventListener('click', (e) => {
+            // 通常のリンク動作（アプリ内遷移）を一度キャンセルする
+            e.preventDefault();
+            
+            // 完全に外部ウィンドウ（規定のブラウザ）としてURLを開く
+            window.open('https://sakumakoyo.github.io/calc-trainer/index.html', '_blank', 'noopener,noreferrer');
+        });
+    </script>
 
 </body>
 </html>
