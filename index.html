@@ -2,226 +2,65 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>計算トレーニングアプリ v6.1</title>
-    <link rel="stylesheet" href="./style.css">
-
-    <meta name="msapplication-square70x70logo" content="/site-tile-70x70.png">
-    <meta name="msapplication-square150x150logo" content="/site-tile-150x150.png">
-    <meta name="msapplication-wide310x150logo" content="/site-tile-310x150.png">
-    <meta name="msapplication-square310x310logo" content="/site-tile-310x310.png">
-    <meta name="msapplication-TileColor" content="#0078d7">
-    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="./favicons/favicon.ico">
-    <link rel="icon" type="image/vnd.microsoft.icon" href="./favicons/favicon.ico">
-    <link rel="apple-touch-icon" sizes="57x57" href="./favicons/apple-touch-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="./favicons/apple-touch-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="./favicons/apple-touch-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="./favicons/apple-touch-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="./favicons/apple-touch-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="./favicons/apple-touch-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="./favicons/apple-touch-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="./favicons/apple-touch-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./favicons/apple-touch-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="36x36" href="./favicons/android-chrome-36x36.png">
-    <link rel="icon" type="image/png" sizes="48x48" href="./favicons/android-chrome-48x48.png">
-    <link rel="icon" type="image/png" sizes="72x72" href="./favicons/android-chrome-72x72.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="./favicons/android-chrome-96x96.png">
-    <link rel="icon" type="image/png" sizes="128x128" href="./favicons/android-chrome-128x128.png">
-    <link rel="icon" type="image/png" sizes="144x144" href="./favicons/android-chrome-144x144.png">
-    <link rel="icon" type="image/png" sizes="152x152" href="./favicons/android-chrome-152x152.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="./favicons/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="256x256" href="./favicons/android-chrome-256x256.png">
-    <link rel="icon" type="image/png" sizes="384x384" href="./favicons/android-chrome-384x384.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="./favicons/android-chrome-512x512.png">
-    <link rel="manifest" href="./manifest.json">
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>計算練習 - アプリ移行のお知らせ</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            text-align: center;
+            padding: 40px 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .card {
+            background: #fff;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h2 { font-size: 20px; margin-bottom: 15px; color: #d9534f; }
+        p { font-size: 14px; line-height: 1.6; color: #555; }
+        .steps {
+            background: #f0f7ff;
+            border: 1px solid #0078d7;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 13px;
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #0078d7;
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 24px;
+            font-weight: bold;
+            border-radius: 25px;
+            font-size: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
+
+    <div class="card">
+        <h2>🚨 アプリ再追加のお願い</h2>
+        <p>アプリのシステム更新にともない、URLが新しくなりました。現在のアイコン,URLからはゲームをプレイできません。</p>
         
-        <nav class="tab-nav">
-            <button id="tab-play-btn" class="tab-btn active">問題に挑戦</button>
-            <button id="tab-record-btn" class="tab-btn">過去の記録</button>
-        </nav>
+        <div class="steps">
+            <p style="margin:0 0 5px 0; font-weight:bold; color:#0078d7;">【お引越しの手順】</p>
+            <ol style="margin:0; padding-left:20px;">
+                <li>下のボタンから新しいページを開きます。</li>
+                <li><b>この古いアプリのアイコンをスマホから削除</b>します。</li>
+                <li>新しく開いたページで、再度「ホーム画面に追加」をしてください。</li>
+            </ol>
+        </div>
 
-        <section id="play-section" class="tab-content active">
-            <div class="play-wrapper">
-                
-                <div id="setup-view" class="card main-card">
-                    <h2>トレーニング設定</h2>
-                    
-                    <div class="mode-toggle-container">
-                        <button id="mode-normal-btn" class="mode-toggle-btn active">通常モード</button>
-                        <button id="mode-review-btn" class="mode-toggle-btn">復習モード (<span id="review-count-badge">0</span>)</button>
-                    </div>
-
-                    <div id="setup-options-box">
-                        <div class="input-group">
-                            <label for="op-select">演算の種類</label>
-                            <select id="op-select">
-                                <option value="+">足し算 (+)</option>
-                                <option value="-">引き算 (-)</option>
-                                <option value="*">掛け算 (×)</option>
-                                <option value="/">割り算 (÷)</option>
-                                <option value="rand-pm">足し算・引き算</option>
-                                <option value="rand-md">掛け算・割り算</option>
-                                <option value="rand-all">四則演算すべて</option>
-                                <option value="mushikui-pm">虫食い（+・-）</option>
-                                <option value="mushikui-pd">虫食い（×・÷）</option>
-                                <option value="mushikui-all">虫食い（四則演算すべて）</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <label for="range-select">数値の範囲</label>
-                            <select id="range-select">
-                                <option value="positive">正の数のみ</option>
-                                <option value="all">負の数を含む</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="count-select">出題数</label>
-                        <select id="count-select">
-                            <option value="10">10問</option>
-                            <option value="20" selected>20問</option>
-                            <option value="30">30問</option>
-                            <option value="50">50問</option>
-                        </select>
-                    </div>
-                    
-                    <div id="review-empty-alert" class="hidden-message hidden"></div>
-
-                    <button id="start-btn" class="primary-btn">スタート</button>
-                </div>
-
-                <div id="countdown-view" class="card main-card hidden">
-                    <div id="countdown-number">3</div>
-                </div>
-
-                <div id="game-view" class="hidden">
-                    <div class="formula-card" id="formula-card-element">
-                        <div class="game-header">
-                            <span id="progress-display">第 1 / 20 問</span>
-                            <span id="timer-display">00:00</span>
-                        </div>
-                        
-                        <div class="formula-area">
-                            <span id="block-left"></span>
-                            <span id="block-middle"></span>
-                            <span id="block-right"></span>
-                            <div class="answer-box" id="answer-input-box"></div>
-                        </div>
-                        
-                        <div id="feedback-text" class="hidden"></div>
-                    </div>
-
-                    <div class="fixed-tenkey">
-                        <div class="tenkey-grid">
-                            <button class="key-btn" data-val="1">1</button>
-                            <button class="key-btn" data-val="2">2</button>
-                            <button class="key-btn" data-val="3">3</button>
-                            <button class="key-btn" data-val="4">4</button>
-                            <button class="key-btn" data-val="5">5</button>
-                            <button class="key-btn" data-val="6">6</button>
-                            <button class="key-btn" data-val="7">7</button>
-                            <button class="key-btn" data-val="8">8</button>
-                            <button class="key-btn" data-val="9">9</button>
-                            <button class="key-btn action" data-val="-">負 (-)</button>
-                            <button class="key-btn" data-val="0">0</button>
-                            <button class="key-btn action" data-val="clear">C</button>
-                            <button class="key-btn enter" id="enter-btn">決定</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="result-view" class="card main-card hidden">
-                    <h2 id="result-title">結果発表 🎉</h2>
-                    <div class="result-stats">
-                        <div id="normal-stats-box">
-                            <p>総経過時間: <strong id="res-total-time">0分0秒</strong></p>
-                            <p>誤答数: <strong id="res-wrong-count">0回</strong></p>
-                            <p>1問あたりの平均速度: <strong id="res-avg-speed">0.00秒</strong></p>
-                        </div>
-                        <div id="review-stats-box" class="hidden">
-                            <p>復習完了: <strong id="res-review-count">0問</strong></p>
-                            <p>間違えた回数: <strong id="res-review-wrong">0回</strong></p>
-                            <p class="review-success-msg">苦手をひとつ克服しました！</p>
-                        </div>
-                    </div>
-                    
-                    <button id="instant-review-btn" class="review-btn hidden">間違えた問題を今すぐ復習する</button>
-                    <button id="back-setup-btn" class="primary-btn">トップに戻る</button>
-                </div>
-                
-            </div>
-        </section>
-
-        <section id="record-section" class="tab-content">
-            <div class="card scrollable-card">
-                <h2>過去のデータとグラフ</h2>
-                
-                <div class="filter-panel">
-                    <div class="input-group">
-                        <label for="filter-op">演算</label>
-                        <select id="filter-op">
-                            <option value="+">足し算 (+)</option>
-                            <option value="-">引き算 (-)</option>
-                            <option value="*">掛け算 (×)</option>
-                            <option value="/">割り算 (÷)</option>
-                            <option value="rand-pm">足し算・引き算</option>
-                            <option value="rand-md">掛け算・割り算</option>
-                            <option value="rand-all">四則演算すべて</option>
-                            <option value="mushikui-pm">虫食い（+・-）</option>
-                            <option value="mushikui-pd">虫食い（×・÷）</option>
-                            <option value="mushikui-all">虫食い（四則すべて）</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label for="filter-range">範囲</label>
-                        <select id="filter-range">
-                            <option value="positive">正の数のみ</option>
-                            <option value="all">負の数を含む</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="input-group row-group">
-                    <label for="graph-limit">表示件数:</label>
-                    <select id="graph-limit">
-                        <option value="10">最新10件</option>
-                        <option value="20" selected>最新20件</option>
-                        <option value="30">最新30件</option>
-                        <option value="all">全件</option>
-                    </select>
-                    <button id="clear-data-btn" class="danger-btn">データを全消去</button>
-                </div>
-
-                <div class="chart-container">
-                    <canvas id="record-chart"></canvas>
-                </div>
-
-                <h3>履歴（最新順）</h3>
-                <div class="history-list-wrapper">
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th>日時</th>
-                                <th>演算</th>
-                                <th>範囲</th>
-                                <th>問題数</th>
-                                <th>誤答</th>
-                                <th>1問平均</th>
-                            </tr>
-                        </thead>
-                        <tbody id="history-tbody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
+        <a href="https://sakumakoyo.github.io/calc-trainer/index.html" class="btn">新しいアプリを開く</a>
     </div>
-    <script src="script.js"></script>
+
 </body>
 </html>
